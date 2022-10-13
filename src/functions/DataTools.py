@@ -155,7 +155,7 @@ class DataTools:
                 "active": True if dream is not None or limited is not None else False,
                 "target": target_doll
             },
-            "summnable_doll": database_controller.FindDatas(
+            "summonable_doll": database_controller.FindDatas(
                 collection_name = "Doll",
                 query = query
             ),
