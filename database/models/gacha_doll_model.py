@@ -1,11 +1,6 @@
 
 
 
-class Doll:
-    def __init__(self):
-        pass
-
-
 class DollData:
     def __init__(self, NAME: str, GRADE: str, ELEMENT: str, DOLL_CLASS: str, LIMITED: bool):
         self._NAME = NAME
@@ -16,19 +11,19 @@ class DollData:
 
 
     @property
-    def GetName(self) -> str:
+    def Name(self) -> str:
         return self._NAME
 
     @property
-    def GetGrade(self) -> str:
+    def Grade(self) -> str:
         return self._GRADE
 
     @property
-    def GetElement(self) -> str:
+    def Element(self) -> str:
         return self._ELEMENT
 
     @property
-    def GetDollClass(self) -> str:
+    def DollClass(self) -> str:
         return self._DOLL_CLASS
 
     @property
@@ -68,3 +63,14 @@ class DollData:
 
         return RT_STR
 
+
+class Doll:
+    @staticmethod
+    def SerializeData(target_data: dict) -> DollData:
+        return DollData(
+            NAME = target_data.get("NAME"),
+            GRADE = target_data.get("GRADE"),
+            ELEMENT = target_data.get("ELEMENT"),
+            DOLL_CLASS = target_data.get("DOLL_CLASS"),
+            LIMITED = target_data.get("LIMITED")
+        )
