@@ -27,7 +27,8 @@ class READ_WRITE:
 
 class DataBaseController:
     def __init__(self, db_name: str):
-        self._account = READ_WRITE.READ_JSON(FILE_DIR = 'mongoDB_account.json').get('account')
+        self._account_file_dir = "mongoDB_account.json" if __name__ == "__main__" else ".\\database\\mongoDB_account.json"
+        self._account = READ_WRITE.READ_JSON(FILE_DIR = self._account_file_dir).get('account')
         self._client = MongoClient(f"mongodb+srv://{self._account.get('id')}:{self._account.get('pw')}"
                                    f"@rw-webservice-database.bbsoap3.mongodb.net/?retryWrites=true&w=majority")
         self._database = self._client.get_database(db_name)
