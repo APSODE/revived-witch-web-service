@@ -18,6 +18,18 @@ class DataTools:
             "html.parser"
         )
 
+    def _QueryGradeSelecotr(self, default_query: dict, grade: str) -> dict:
+
+        for GR in ["UR", "SSR", "SR", "R"]:
+            if {"GRADE": GR} in default_query["$and"]:
+                default_query["$and"].remove({"GRADE": GR})
+            else:
+                pass
+
+        default_query["$and"].append({"GRADE": grade})
+        print(f"{grade} query : {default_query}\n\n")
+        return default_query
+
     def GetData_DOLL(self) -> [DollData]:
         DOLL_DATA_LIST = []
 
@@ -155,10 +167,24 @@ class DataTools:
                 "active": True if dream is not None or limited is not None else False,
                 "target": target_doll
             },
-            "summonable_doll": database_controller.FindDatas(
-                collection_name = "Doll",
-                query = query
-            ),
+            "summonable_doll": {
+                "UR": database_controller.FindDatas(
+                    collection_name = "Doll",
+                    query = self._QueryGradeSelecotr(default_query = query, grade = "UR")
+                ),
+                "SSR": database_controller.FindDatas(
+                    collection_name = "Doll",
+                    query = self._QueryGradeSelecotr(default_query = query, grade = "SSR")
+                ),
+                "SR": database_controller.FindDatas(
+                    collection_name = "Doll",
+                    query = self._QueryGradeSelecotr(default_query = query, grade = "SR")
+                ),
+                "R": database_controller.FindDatas(
+                    collection_name = "Doll",
+                    query = self._QueryGradeSelecotr(default_query = query, grade = "R")
+                ),
+            },
             "probability": {
                 "UR": 2,
                 "SSR": 8,
@@ -175,18 +201,6 @@ class DataTools:
 
 
 if __name__ == "__main__":
-    DATA_RF = DataTools()
-    DATA_RF.CreateGachaBannerData(element = "염석")
-    print("원소 소환 : 염석 생성완료")
-    DATA_RF.CreateGachaBannerData(element = "수은")
-    print("원소 소환 : 수은 생성완료")
-    DATA_RF.CreateGachaBannerData(element = "유황")
-    print("원소 소환 : 유황 생성완료")
-    DATA_RF.CreateGachaBannerData(dream = "안젤린")
-    print("꿈의 소환 : 안젤린 생성완료")
-    DATA_RF.CreateGachaBannerData(limited = "세라냐")
-    print("한정 소환 : 세라냐 생성완료")
-    DATA_RF.CreateGachaBannerData()
-    print("영혼 소환 : 생성완료")
+    pass
 
 
