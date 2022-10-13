@@ -1,6 +1,9 @@
+import random
+
 from database.DataBaseController import DataBaseController
 import json
 from bson import json_util
+from random import *
 
 class Simulator:
     def __init__(self, banner_name: str):
@@ -10,6 +13,7 @@ class Simulator:
             query = {"banner_name": banner_name},
             find_one = True
         )
+        self._SIMULATE_GACHA_LIST = []
 
     def _SelectGrade(self):
         pass
@@ -21,10 +25,19 @@ class Simulator:
             json.dump(json.loads(json_data), WRITE_PROFILE, indent = 4)
 
     def SimulateGacha(self):
-        pass
+        gacha_probability = self._SIMULATE_BANNER_DATA.get("probability")
+        summonable_dolls = self._SIMULATE_BANNER_DATA.get("summonable_doll")
+        for grade in ["UR", "SSR", "SR", "R"]:
+            for E in choices(summonable_dolls.get(grade), k = gacha_probability.get(grade)):
+                self._SIMULATE_GACHA_LIST.append(E)
+
+        # COUNT = 1
+        # for EL in self._SIMULATE_GACHA_LIST:
+        #     print(f"{COUNT} : {EL}\n")
+        #     COUNT += 1
 
 
 if __name__ == "__main__":
 
     gacha_simulator = Simulator(banner_name = "영혼 소환")
-    gacha_simulator.Test()
+    gacha_simulator.SimulateGacha()
