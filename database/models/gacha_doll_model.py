@@ -31,7 +31,7 @@ class DollData:
         return self._LIMITED
 
 
-    def GetDollAllData(self) -> dict:
+    def GetAllDollData(self) -> dict:
         """
         :return: RT_DATA = {
             "NAME": self._NAME,
