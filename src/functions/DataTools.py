@@ -45,7 +45,7 @@ class DataTools:
                 LIMITED = True if DOLL_ELEM.attrs.get("data-tags") == "limited" else False
             )
 
-            DOLL_DATA_LIST.append(DOLL_DATA_DTO.GetDollAllData())
+            DOLL_DATA_LIST.append(DOLL_DATA_DTO.GetAllDollData())
 
         return DOLL_DATA_LIST
 
@@ -77,9 +77,18 @@ class DataTools:
                         }
                     },
                     {
-                        "NAME": {
-                            "$ne": "아네모네"
-                        }
+                        "$and": [
+                            {
+                                "NAME": {
+                                    "$ne": "아네모네"
+                                }
+                            },
+                            {
+                                "NAME": {
+                                    "$ne": "유이"
+                                }
+                            }
+                        ]
                     }
                 ]
             }
@@ -100,9 +109,18 @@ class DataTools:
                         },
                     },
                     {
-                        "NAME": {
-                            "$ne": "아네모네"
-                        }
+                        "$and": [
+                            {
+                                "NAME": {
+                                    "$ne": "아네모네"
+                                }
+                            },
+                            {
+                                "NAME": {
+                                    "$ne": "유이"
+                                }
+                            }
+                        ]
                     }
                 ]
             }
@@ -118,9 +136,18 @@ class DataTools:
                         }
                     },
                     {
-                        "NAME": {
-                            "$ne": "아네모네"
-                        }
+                        "$and": [
+                            {
+                                "NAME": {
+                                    "$ne": "아네모네"
+                                }
+                            },
+                            {
+                                "NAME": {
+                                    "$ne": "유이"
+                                }
+                            }
+                        ]
                     },
                     {
 
@@ -155,6 +182,11 @@ class DataTools:
                     {
                         "LIMITED": {
                             "$eq": False
+                        }
+                    },
+                    {
+                        "NAME": {
+                            "$ne": "유이"
                         }
                     }
                 ]
@@ -194,6 +226,28 @@ class DataTools:
         }
 
         database_controller.AddDataToDataBase(collection_name = "GachaBanner", add_data = [gacha_banner_data])
+
+    def AddNewDoll(self, DOLL_DTO: DollData) -> bool:
+        database_controller = DataBaseController("Development_Database")
+        error_count = 0
+        try:
+            database_controller.AddDataToDataBase(
+                collection_name = "Doll",
+                add_data = [
+                    DOLL_DTO.GetAllDollData()
+                ]
+            )
+
+        except Exception as MSG:
+            print("인형 데이터 추가중에 문제 발생")
+            print(MSG)
+            error_count += 1
+
+        finally:
+            if error_count == 0:
+                return True
+            else:
+                return False
 
 
 

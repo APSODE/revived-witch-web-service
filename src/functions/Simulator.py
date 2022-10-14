@@ -25,16 +25,17 @@ class Simulator:
             json.dump(json.loads(json_data), WRITE_PROFILE, indent = 4)
 
     def SimulateGacha(self):
+        GACHA_RESULT_LIST = []
         gacha_probability = self._SIMULATE_BANNER_DATA.get("probability")
         summonable_dolls = self._SIMULATE_BANNER_DATA.get("summonable_doll")
         for grade in ["UR", "SSR", "SR", "R"]:
             for E in choices(summonable_dolls.get(grade), k = gacha_probability.get(grade)):
                 self._SIMULATE_GACHA_LIST.append(E)
 
-        # COUNT = 1
-        # for EL in self._SIMULATE_GACHA_LIST:
-        #     print(f"{COUNT} : {EL}\n")
-        #     COUNT += 1
+        for gacha_result_doll in choices(self._SIMULATE_GACHA_LIST, k = 10):
+            GACHA_RESULT_LIST.append(gacha_result_doll)
+
+        return GACHA_RESULT_LIST
 
 
 if __name__ == "__main__":
