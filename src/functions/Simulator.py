@@ -1,13 +1,16 @@
 import random
+import time
 
-from database.DataBaseController import DataBaseController
+from database.models.gacha_doll_model import DollData
+
 import json
 from bson import json_util
 from random import *
 
 class Simulator:
     def __init__(self, banner_name: str):
-        self.database_controller = DataBaseController("Development_Database")
+        from app import database_controller
+        self.database_controller = database_controller
         self._SIMULATE_BANNER_DATA = self.database_controller.FindDatas(
             collection_name = "GachaBanner",
             query = {"banner_name": banner_name},
@@ -24,7 +27,8 @@ class Simulator:
             json_data = json.dumps(result, default = json_util.default)
             json.dump(json.loads(json_data), WRITE_PROFILE, indent = 4)
 
-    def SimulateGacha(self):
+    def SimulateGacha(self) -> [DollData]:
+        f_time = time.perf_counter()
         GACHA_RESULT_LIST = []
         gacha_probability = self._SIMULATE_BANNER_DATA.get("probability")
         summonable_dolls = self._SIMULATE_BANNER_DATA.get("summonable_doll")
@@ -33,10 +37,36 @@ class Simulator:
                 self._SIMULATE_GACHA_LIST.append(E)
 
         for gacha_result_doll in choices(self._SIMULATE_GACHA_LIST, k = 10):
-            GACHA_RESULT_LIST.append(gacha_result_doll)
+            gacha_result_doll_obj = DollData(
+                NAME = gacha_result_doll.get("NAME"),
+                GRADE = gacha_result_doll.get("GRADE"),
+                ELEMENT = gacha_result_doll.get("ELEMENT"),
+                DOLL_CLASS = gacha_result_doll.get("DOLL_CLASS"),
+                LIMITED = gacha_result_doll.get("LIMITED")
+            )
+            GACHA_RESULT_LIST.append(gacha_result_doll_obj)
+        s_time = time.perf_counter()
 
+        print(f"SimulateGacha 소요시간 : {s_time - f_time}s")
         return GACHA_RESULT_LIST
 
+    def GradeChecker(self, gacha_result_list: [DollData]) -> dict:
+        rt_data = {
+            "ur": False,
+            "ssr": False
+        }
+
+        for doll_data in gacha_result_list:
+            doll_data: DollData
+            if doll_data.Grade == "UR":
+                rt_data["ur"] = True
+
+            elif doll_data.Grade == "SSR":
+                rt_data["ssr"] = True
+            else:
+                pass
+
+        return rt_data
 
 if __name__ == "__main__":
 

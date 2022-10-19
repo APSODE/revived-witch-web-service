@@ -1,8 +1,10 @@
+# import os
+
 import requests
 from pymongo import MongoClient
 from bs4 import BeautifulSoup
 from database.models.gacha_doll_model import DollData
-from database.DataBaseController import DataBaseController
+
 
 
 
@@ -18,7 +20,8 @@ class DataTools:
             "html.parser"
         )
 
-    def _QueryGradeSelecotr(self, default_query: dict, grade: str) -> dict:
+    @staticmethod
+    def _QueryGradeSelecotr(default_query: dict, grade: str) -> dict:
 
         for GR in ["UR", "SSR", "SR", "R"]:
             if {"GRADE": GR} in default_query["$and"]:
@@ -49,8 +52,16 @@ class DataTools:
 
         return DOLL_DATA_LIST
 
+    def CreateAllDollData(self, doll_data_object_list: [DollData], collection_name: str) -> bool:
+        WORK_STATUS = True
+        try:
+            pass
+        except:
+            pass
+
+
     def CreateGachaBannerData(self, element: str = None, dream: str = None, limited: str = None) -> [dict]:
-        database_controller = DataBaseController(db_name = "Development_Database")
+        from app import database_controller
         if element is not None:
             banner_name = f"{element} 원소 소환"
             target_doll = ""
@@ -167,8 +178,6 @@ class DataTools:
                 ]
             }
 
-
-
         else:
             banner_name = "영혼 소환"
             target_doll = ""
@@ -227,8 +236,9 @@ class DataTools:
 
         database_controller.AddDataToDataBase(collection_name = "GachaBanner", add_data = [gacha_banner_data])
 
-    def AddNewDoll(self, DOLL_DTO: DollData) -> bool:
-        database_controller = DataBaseController("Development_Database")
+    @staticmethod
+    def AddNewDoll(DOLL_DTO: DollData) -> bool:
+        from app import database_controller
         error_count = 0
         try:
             database_controller.AddDataToDataBase(
@@ -249,12 +259,39 @@ class DataTools:
             else:
                 return False
 
+    @staticmethod
+    def DatabaseDollDataSerializer(database_doll_data: dict) -> dict:
+        RT_DICT = {
+            "NAME": database_doll_data.get("NAME"),
+            "GRADE": database_doll_data.get("GRADE"),
+            "ELEMENT": database_doll_data.get("ELEMENT"),
+            "DOLL_CLASS": database_doll_data.get("DOLL_CLASS"),
+            "LIMITED": database_doll_data.get("LIMITED")
+        }
+
+        return RT_DICT
 
 
+    # @staticmethod
+    # def SaveDataInLocalFile(save_file_path: str = None) -> None:
+    #     if save_file_path is not None:
+    #         pass
+    #
+    #     rt_json_data = {}
+    #
+    #     database_controller = DataBaseController(db_name = "Development_Database", use_cloud_db = True)
+    #     for collection_name in database_controller.Database.list_collection_names():
+    #         db_collection = database_controller.Database.get_collection(collection_name)
+    #
+    #         rt_json_data[collection_name] = {}
+    #         for data in db_collection.find():
+    #             rt_json_data[collection_name][]
 
 
 
 if __name__ == "__main__":
+    # DataTools.SaveDataInLocalFile()
+
     pass
 
 
