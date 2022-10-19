@@ -1,0 +1,39 @@
+{% extends "Frame/RevivedWitch_WebService_BaseFrame.html" %}
+{% block head %}
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <title>ajax 통신 테스트</title>
+{% endblock %}
+{% block content %}
+    <p id="example">AJAX</p>
+    <input type="text" id="id1" placeholder="id">
+    <input type="text" id="password1" placeholder="password">
+    <input type="text" id="email1" placeholder="email">
+    <input type="button" id="execute" value="execute">
+
+
+    <script>
+        $('#execute').click(function(){
+            var id = $('#id1').val()
+            var password = $('#password1').val()
+            var email = $('#email1').val()
+
+            var postdata = {
+                'id':id, 'password':password, 'email':email
+            }
+            $.ajax({
+                type: 'POST',
+                url: '{{url_for("Test.Ajax")}}',
+                data: JSON.stringify(postdata),
+                dataType : 'JSON',
+                contentType: "application/json",
+                success: function(data){
+                    alert('성공! 데이터 값:' + data.result2['id']+" " + data.result2['password']+ " " + data.result2['email'])
+                },
+                error: function(request, status, error){
+                    alert('ajax 통신 실패')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+{% endblock %}
