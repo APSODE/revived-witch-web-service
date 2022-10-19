@@ -33,7 +33,7 @@ class DollData:
 
     def GetAllDollData(self) -> dict:
         """
-        :return: RT_DATA = {
+        :return : RT_DATA = {
             "NAME": self._NAME,
             "GRADE": self._GRADE,
             "ELEMENT": self._ELEMENT,
