@@ -1,4 +1,6 @@
-from pymongo import MongoClient
+import os
+
+from pymongo import MongoClient, database
 import json
 
 
@@ -13,7 +15,7 @@ class READ_WRITE:
         ==> READ_USER_DATA[:func:`"KEY"`]
         """
 
-        with open(f"{FILE_DIR}", "r", encoding="utf-8") as READ_USER_PROFILE:
+        with open(f"{FILE_DIR}", "r", encoding = "utf-8") as READ_USER_PROFILE:
             READ_USER_DATA = json.load(READ_USER_PROFILE)
             READ_USER_PROFILE.close()
 
@@ -27,10 +29,12 @@ class READ_WRITE:
 
 class DataBaseController:
     def __init__(self, db_name: str):
-        self._account_file_dir = "mongoDB_account.json" if __name__ == "__main__" else ".\\database\\mongoDB_account.json"
+        self._account_file_dir = os.path.dirname(os.path.abspath(__file__)) + "\\mongoDB_account.json"
         self._account = READ_WRITE.READ_JSON(FILE_DIR = self._account_file_dir).get('account')
+
         self._client = MongoClient(f"mongodb+srv://{self._account.get('id')}:{self._account.get('pw')}"
                                    f"@rw-webservice-database.bbsoap3.mongodb.net/?retryWrites=true&w=majority")
+
         self._database = self._client.get_database(db_name)
 
 
@@ -46,6 +50,10 @@ class DataBaseController:
             return self._database.get_collection(collection_name).find_one(query)
         else:
             return [result for result in self._database.get_collection(collection_name).find(query)]
+
+    @property
+    def Database(self) -> database.Database:
+        return self._database
 
 if __name__ == "__main__":
     pass
