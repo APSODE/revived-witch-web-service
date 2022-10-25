@@ -1,11 +1,13 @@
-import random
-import time
-
-from database.models.gacha_doll_model import DollData
-
 import json
-from bson import json_util
+import time
 from random import *
+
+from bson import json_util
+
+from database.models.gacha_banner_model import BannerData
+from database.models.gacha_doll_model import DollData
+from functions.DataTools import DataTools
+
 
 class Simulator:
     def __init__(self, banner_name: str):
@@ -49,6 +51,16 @@ class Simulator:
 
         print(f"SimulateGacha 소요시간 : {s_time - f_time}s")
         return GACHA_RESULT_LIST
+
+    def SimulatePickUpGacha(self, banner_data: BannerData, current_gacha_count: int) -> [DollData]:
+        banner_pickup_data = banner_data.PickUpData
+        banner_probability = banner_data.Probability
+
+        if banner_pickup_data.get("active"):
+            pickup_doll_data = DataTools.GetDollDataByDollName(doll_name = banner_pickup_data.get("target"))
+
+
+
 
     def GradeChecker(self, gacha_result_list: [DollData]) -> dict:
         rt_data = {
