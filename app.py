@@ -12,7 +12,7 @@ database_controller = DataBaseController("Development_Database")
 
 app.register_blueprint(SimulatorView.BP)
 app.register_blueprint(MainView.BP)
-app.register_blueprint(TestView.BP)
+# app.register_blueprint(TestView.BP)
 
 @app.route('/')
 def Greeting():
@@ -26,8 +26,4 @@ if __name__ == '__main__':
         "school_wifi": "172.16.25.48",
         "school_tethering": "192.168.20.12"
     }
-    app.run(
-        host = host_dict["school_wifi"],
-        port = 30119,
-        debug = True
-    )
+    app.run()
