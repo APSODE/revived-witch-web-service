@@ -3,10 +3,8 @@
 import requests
 from pymongo import MongoClient
 from bs4 import BeautifulSoup
-from database.models.gacha_doll_model import DollData
-
-
-
+from database.models.gacha_doll_model import DollData, Doll
+from models.gacha_banner_model import BannerData, Banner
 
 
 class DataTools:
@@ -271,7 +269,49 @@ class DataTools:
 
         return RT_DICT
 
+    @staticmethod
+    def DatabaseBanneDataSerializer(database_banner_data: dict) -> dict:
+        RT_DICT = {
+            "BANNER_NAME": database_banner_data.get("BANNER_NAME"),
+            "PICK_UP_DATA": database_banner_data.get("PICK_UP_DATA"),
+            "PROBABILITY": database_banner_data.get("PROBABILITY")
+        }
 
+        return RT_DICT
+
+    @staticmethod
+    def GetDollDataByDollName(doll_name: str) -> DollData:
+        from app import database_controller
+        doll_db_data = database_controller.FindDatas(
+            collection_name = "Doll",
+            query = {"NAME": doll_name},
+            find_one = True
+        )
+
+        doll_object = Doll.SerializeData(
+            target_data = DataTools.DatabaseDollDataSerializer(
+                database_doll_data = doll_db_data
+            )
+        )
+
+        return doll_object
+
+    @staticmethod
+    def GetBannerDataByBannerName(banner_name: str) -> BannerData:
+        from app import database_controller
+        banner_db_data = database_controller.FindDatas(
+            collection_name = "GachaBanner",
+            query = {"banner_name": banner_name},
+            find_one = True
+        )
+
+        banner_object = Banner.SerializeData(
+            target_data = DataTools.DatabaseBanneDataSerializer(
+                database_banner_data = banner_db_data
+            )
+        )
+
+        return banner_object
     # @staticmethod
     # def SaveDataInLocalFile(save_file_path: str = None) -> None:
     #     if save_file_path is not None:
