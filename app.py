@@ -23,11 +23,11 @@ if __name__ == '__main__':
     app.secret_key = "RevivedWitch" #UUID 사용예정
     host_dict = {
         "home": "192.168.212.4",
-        "school_wifi": "172.16.130.244",
+        "school_wifi": "172.16.127.2",
         "school_tethering": "192.168.20.12"
     }
     app.run(
-        host = host_dict["home"],
+        host = host_dict["school_wifi"],
         port = 30119,
         debug = True
     )
