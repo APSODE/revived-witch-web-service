@@ -9,6 +9,6 @@ BP = Blueprint("Main", __name__,
 
 @BP.route("/")
 def RevivedWitch_Main():
-    return render_template("Frame/RevivedWitch_WebService_BaseFrame.html")
+    return render_template("Main/MainPage.html")
 
 
