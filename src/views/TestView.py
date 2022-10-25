@@ -26,3 +26,11 @@ def Ajax():
     print(data)
 
     return jsonify(result = "success", result2= data)
+
+@BP.route("/footer")
+def TestFooter():
+    return render_template("TestTemplates/Footer_Test.html")
+
+@BP.route("/starter")
+def TestStarter():
+    return render_template("TestTemplates/Starter_Test.html")
