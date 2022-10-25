@@ -32,7 +32,7 @@ class DataBaseController:
         self._account_file_dir = os.path.dirname(os.path.abspath(__file__)) + "\\mongoDB_account.json"
         # self._account = READ_WRITE.READ_JSON(FILE_DIR = self._account_file_dir).get('account')
         self._account = {
-            "id": os.environ.get("id"),
+            "id": os.environ.get("ac_id"),
             "pw": os.environ.get("pw")
         }
         self._client = MongoClient(f"mongodb+srv://{self._account.get('id')}:{self._account.get('pw')}"
