@@ -3,6 +3,8 @@ import time
 
 from flask import Blueprint, redirect, render_template, url_for, session, request, jsonify
 from urllib.parse import quote
+
+from functions.DataTools import DataTools
 from src.functions.ImageTools import ImageTools
 from src.functions.Simulator import Simulator
 import base64
@@ -21,11 +23,26 @@ def Simulator_Main():
         return render_template("Simulator/Simulator.html", result_img = None)
     else:
         banner = session.get("banner")
+        if "gacha_count" not in session.keys():
+            session["gacha_count"] = 10
+        else:
+            session["gacha_count"] += 10
+
         simulator = Simulator(
             banner_name = "영혼 소환" if banner is None else banner
         )
+        current_banner_data = DataTools.GetBannerDataByBannerName(banner_name = banner)
+        if current_banner_data.PickUpData.get("active"):
+            gacha_result_doll_list = simulator.SimulatePickUpGacha(
+                current_gacha_count = session.get("gacha_count"),
+                banner_data = current_banner_data
+            )
 
-        gacha_result_doll_list = simulator.SimulateGacha()
+        else:
+            gacha_result_doll_list = simulator.SimulateGacha()
+
+
+
         session["gacha_result_list"] = {}
         response_use_data = {}
         for doll_data_idx in range(len(gacha_result_doll_list)):
