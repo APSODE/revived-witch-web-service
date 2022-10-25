@@ -26,4 +26,4 @@ if __name__ == '__main__':
         "school_wifi": "172.16.25.48",
         "school_tethering": "192.168.20.12"
     }
-    app.run()
+    app.run(host = "0.0.0.0")
