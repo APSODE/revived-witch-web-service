@@ -1,47 +1,57 @@
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "Frame/RevivedWitch_WebService_BaseFrame.html" %}
+{% block content %}
+    <div class="col-lg-8 mx-auto p-4 py-md-5">
+        <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
+            <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                <img src="../../static/img/icon/main_icon.png" style="margin-right: 10px" width="40" height="40">
+                <span class="fs-4" style="margin-left: 10px; padding-top: 4px; font-family: 'Black Han Sans', sans-serif" >가챠 시뮬레이터 시작하기</span>
+            </a>
+        </header>
 
-    <title>Heroes · Bootstrap v5.2</title>
+        <main>
+            <h1 style="font-family: 'Black Han Sans', sans-serif">가챠 시뮬레이터 시작하는 방법</h1>
+            <p class="fs-5 col-md-8" style="color: gray; font-family: 'Jua', sans-serif">옆의 배너 사진을 클릭하는것으로 빠르게 <br>가챠 시뮬레이터를 시작할 수 있습니다!</p>
 
+            <hr style="margin-top: 45px; padding-top: 45px">
 
+            <div class="row g-5">
+                <div class="col-md-6">
+                    <h3 style="font-family: 'Black Han Sans', sans-serif">제작에 도움을 주신 고마운 분들</h3>
+                    <ul class="icon-list ps-0">
+                        <li class="d-flex align-items-start mb-1">
+                            <span style="color: gray; font-family: 'Jua', sans-serif">깨어난 마녀 DB 인형 이름 인덱싱
+                                <span style="color: black">-</span>
+                                <span style="color: orange">소라토모</span>
+                            </span>
+                        </li>
 
+                        <li class="d-flex align-items-start mb-1">
+                            <span style="color: gray; font-family: 'Jua', sans-serif">인게임 가챠 이미지 및 인형 이미지 제공
+                                <span style="color: black">-</span>
+                                <span style="color: dodgerblue">초과근무</span>
+                            </span>
 
+                        </li>
 
+                    </ul>
+                </div>
 
-    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+                <div class="col-md-6">
+                    <h2 style="font-family: 'Black Han Sans', sans-serif">문의 및 건의</h2>
+                    <p style="color: gray; font-family: 'Jua', sans-serif">
+                        사용하다 문제가 생기거나, 추가되었으면 하는 기능을<br> 깨어난 마녀 채널에 글을 남겨주세요.
+                        <br>
+                    </p>
+                    <ul class="icon-list ps-0">
+                        <li class="d-flex align-items-start mb-1">
+                            <a href="https://arca.live/b/revivedwitch" style="font-family: 'Jua', sans-serif">
+                                문의 & 건의하러 가기
+                            </a>
+                        </li>
 
-
-  </head>
-  <body>
-
-    <main>
-      <div class="b-example-divider"></div>
-
-      <div class="px-4 pt-5 my-5 text-center border-bottom">
-        <h1 class="display-4 fw-bold">Centered screenshot</h1>
-        <div class="col-lg-6 mx-auto">
-          <p class="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
-          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-            <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">Primary button</button>
-            <button type="button" class="btn btn-outline-secondary btn-lg px-4">Secondary</button>
-          </div>
-        </div>
-        <div class="overflow-hidden" style="max-height: 30vh;">
-          <div class="container px-5">
-            <img src="bootstrap-docs.png" class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" width="700" height="500" loading="lazy">
-          </div>
-        </div>
-      </div>
-
-
-    </main>
-
-
-    <script src="../../static/js/bootstrap.bundle.min.js"></script>
-
-
-  </body>
-</html>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}
