@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, redirect
 
-from DataBaseController import DataBaseController
+from database.DataBaseController import DataBaseController
 from src.views import SimulatorView, MainView, TestView
 
 app = Flask(__name__)
