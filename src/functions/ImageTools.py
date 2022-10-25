@@ -18,11 +18,11 @@ class ImageTools:
         WORK_STATUS = True
         pos = [100, 0]
         from app import BASE_DIR
-        gacha_background_image = Image.open(BASE_DIR + f"\\static\\img\\gacha\\background\\gacha_background.png")
+        gacha_background_image = Image.open(BASE_DIR + f"/static/img/gacha/background/gacha_background.png")
         for doll_object_idx in range(len(doll_object_list)):
             doll_object = doll_object_list[doll_object_idx]
             doll_num = doll_object_idx + 1
-            doll_image = Image.open(BASE_DIR + f"\\static\\img\\gacha\\doll\\{doll_object.Name}.png")
+            doll_image = Image.open(BASE_DIR + f"/static/img/gacha/doll/{doll_object.Name}.png")
             doll_image = doll_image.resize((220, 703))
             if doll_num % 2 == 0:
                 gacha_background_image.paste(doll_image, (pos[0], pos[1]), doll_image)
