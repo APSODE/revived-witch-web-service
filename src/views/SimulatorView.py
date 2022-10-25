@@ -58,7 +58,7 @@ def Simulator_Main():
 
         # img_save_dir = os.path.dirname(os.path.dirname())
         from app import BASE_DIR
-        img_save_dir = BASE_DIR + f"\\static\\img\\gacha\\result\\{img_name}.png"
+        img_save_dir = BASE_DIR + f"/static/img/gacha/result/{img_name}.png"
         f_time = time.perf_counter()
         gacha_result_img.save(img_save_dir)
         s_time = time.perf_counter()
