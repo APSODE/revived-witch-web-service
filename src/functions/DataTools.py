@@ -4,7 +4,7 @@ import requests
 from pymongo import MongoClient
 from bs4 import BeautifulSoup
 from database.models.gacha_doll_model import DollData, Doll
-from models.gacha_banner_model import BannerData, Banner
+from database.models.gacha_banner_model import BannerData, Banner
 
 
 class DataTools:
