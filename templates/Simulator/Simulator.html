@@ -10,6 +10,7 @@
             <h1 class="h2" style="font-family: 'Black Han Sans', sans-serif; margin-top: 10px">가챠 시뮬레이터 </h1>
         {% else %}
             <h1 class="h2" style="font-family: 'Black Han Sans', sans-serif; margin-top: 10px">가챠 시뮬레이터 - [{{ session.get("banner") }}]</h1>
+            
         {% endif %}
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
@@ -22,86 +23,6 @@
                            style="font-family: 'Jua', sans-serif; font-size: large; margin-left: 8px; margin-bottom: 5px"
                            value="10회" data-gacha-amount="10">
 
-                    <script>
-                        $('#gacha_1').click(function (){
-                            var gacha_amount = $('#gacha_1').val()
-                            var post_data = {
-                                "gacha_amount": gacha_amount
-                            }
-                            {#document.getElementById("gacha_result_img").src = "../static/video/gacha_normal.mp4"#}
-                            $.ajax({
-                                url: {{ url_for("Simulator.Simulator_Main") }},
-                                type: 'POST',
-                                data: JSON.stringify(post_data),
-                                dataType: 'JSON',
-                                contentType: 'application/json',
-                                success: function (data) {
-                                    {#alert(data.result_data['src'])#}
-                                    document.getElementById("gacha_result_img").src = data.result_data["src"]
-                                    var gachaResultData = data.result_data["result"]
-                                    for (result_num in gachaResultData) {
-                                        var doll_data_dict = gachaResultData[result_num]
-                                        var result_elem = document.getElementById("gacha_result_table")
-                                        var data_elem_container = document.createElement("tr")
-
-
-                                        var doll_name_data_elem = document.createElement("td")
-                                        var doll_name_data_node = document.createTextNode(doll_data_dict["NAME"])
-                                        doll_name_data_elem.appendChild(doll_name_data_node)
-                                        data_elem_container.appendChild(doll_name_data_elem)
-
-                                        var doll_grade_data_elem = document.createElement("td")
-                                        var doll_grade_data_node = document.createTextNode(doll_data_dict["GRADE"])
-                                        doll_grade_data_elem.appendChild(doll_grade_data_node)
-                                        data_elem_container.appendChild(doll_grade_data_elem)
-
-                                        var doll_element_data_elem = document.createElement("td")
-                                        var element_data = doll_data_dict["ELEMENT"]
-                                        if (element_data === "Saltstone") {
-                                            var element_data_kr = "염석"
-                                        } else if (element_data === "Brimstone") {
-                                            var element_data_kr = "유황"
-                                        } else {
-                                            var element_data_kr = "수은"
-                                        }
-                                        var doll_element_data_node = document.createTextNode(element_data_kr)
-                                        doll_element_data_elem.appendChild(doll_element_data_node)
-                                        data_elem_container.appendChild(doll_element_data_elem)
-
-                                        var doll_class_data_elem = document.createElement("td")
-                                        var class_data = doll_data_dict["DOLL_CLASS"]
-                                        if (class_data === "Guardian") {
-                                            var class_data_kr = "수호형"
-
-                                        } else if (class_data === "Destroyer") {
-                                            var class_data_kr = "파괴형"
-
-                                        } else if (class_data === "Mage") {
-                                            var class_data_kr = "마도형"
-
-                                        } else if (class_data === "Assassin") {
-                                            var class_data_kr = "암살형"
-
-                                        } else if (class_data === "	Healer") {
-                                            var class_data_kr = "회복형"
-
-                                        } else {
-                                            var class_data_kr = "방해형"
-                                        }
-                                        var doll_class_data_node = document.createTextNode(class_data_kr)
-                                        doll_class_data_elem.appendChild(doll_class_data_node)
-                                        data_elem_container.appendChild(doll_class_data_elem)
-
-
-                                        result_elem.appendChild(data_elem_container)
-                                    }
-                                },
-                                error: function (request, status, error) {
-                                    alert("가챠 결과 이미지를 가져오는 도중에 ajax 통신에 실패하였습니다.")
-                                }
-                            })
-                        })
-                    </script>
                     <script>
                         $('#gacha_10').click(function (){
                             var gacha_amount = $('#gacha_10').val()
@@ -119,10 +40,16 @@
 
                                     document.getElementById("gacha_result_img").src = data.result_data["src"]
                                     var gachaResultData = data.result_data["result"]
+
                                     for (result_num in gachaResultData) {
                                         var doll_data_dict = gachaResultData[result_num]
                                         var result_elem = document.getElementById("gacha_result_table")
                                         var data_elem_container = document.createElement("tr")
+
+                                        var gacha_count_elem = document.createElement("td")
+                                        var gacha_count_node = document.createTextNode(data.result_data["current_gacha_amount"] - 10 + parseInt(result_num))
+                                        gacha_count_elem.appendChild(gacha_count_node)
+                                        data_elem_container.appendChild(gacha_count_elem)
 
 
                                         var doll_name_data_elem = document.createElement("td")
@@ -201,6 +128,7 @@
 
             <thead>
                 <tr>
+                    <th id="gachaCount" scope="col" style="font-size: x-large">횟수</th>
                     <th scope="col" style="font-size: x-large">인형</th>
                     <th scope="col" style="font-size: x-large">등급</th>
                     <th scope="col" style="font-size: x-large">속성</th>

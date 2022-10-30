@@ -20,13 +20,22 @@ BP = Blueprint("Simulator", __name__,
 @BP.route("/", methods = ["GET", "POST"])
 def Simulator_Main():
     if request.method == "GET":
+        if session.get("banner") != session.get("bf_banner"):
+            print(f"current banner : {session.get('banner')}")
+            print(f"before banner : {session.get('bf_banner')}")
+
+            print("gacha_count 값 초기화 진행")
+            session["gacha_count"] = 0
         return render_template("Simulator/Simulator.html", result_img = None)
     else:
         banner = session.get("banner")
         if "gacha_count" not in session.keys():
+            print("gacha_count의 값을 10으로 지정")
             session["gacha_count"] = 10
         else:
+            print("gacha_count의 값을 10을 추가")
             session["gacha_count"] += 10
+            print(f"gacha_count : {session.get('gacha_count')}")
 
         simulator = Simulator(
             banner_name = "영혼 소환" if banner is None else banner
@@ -68,28 +77,37 @@ def Simulator_Main():
         return_data = {
             "src": f"../static/img/gacha/result/{img_name}.png",
             "name": f"{img_name}",
-            "result": response_use_data
+            "result": response_use_data,
+            "current_gacha_amount": session.get("gacha_count")
         }
         return jsonify(result_data = return_data)
 
 @BP.route("/soul")
 def Simulator_Main_Soul():
+    session["bf_banner"] = session.get("banner")
     session["banner"] = f"영혼 소환"
+
     return redirect(url_for("Simulator.Simulator_Main"))
 
 @BP.route("/mercury")
 def Simulator_Main_Mercury():
+    session["bf_banner"] = session.get("banner")
     session["banner"] = f"수은 원소 소환"
+
     return redirect(url_for("Simulator.Simulator_Main"))
 
 @BP.route("/brimstone")
 def Simulator_Main_Brimstone():
+    session["bf_banner"] = session.get("banner")
     session["banner"] = f"유황 원소 소환"
+
     return redirect(url_for("Simulator.Simulator_Main"))
 
 @BP.route("/saltstone")
 def Simulator_Main_Saltstone():
+    session["bf_banner"] = session.get("banner")
     session["banner"] = f"염석 원소 소환"
+
     return redirect(url_for("Simulator.Simulator_Main"))
 
 # @BP.route("/<img_file_bin>")
