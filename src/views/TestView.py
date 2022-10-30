@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, url_for, request, jsonify
+from flask import Blueprint, redirect, render_template, url_for, request, jsonify, session
 
 
 
@@ -34,3 +34,20 @@ def TestFooter():
 @BP.route("/starter")
 def TestStarter():
     return render_template("TestTemplates/Starter_Test.html")
+
+@BP.route("/session")
+def TestSession():
+    return render_template("TestTemplates/Session_Test.html")
+
+@BP.route("/session", methods = ['POST'])
+def Session():
+    print("호출 확인")
+    data = request.get_json()
+    session["session_test"] = 1
+    return jsonify(result = "success", result2 = {"test": "test"})
+
+@BP.route("/session_clear", methods = ['POST'])
+def SessionClear():
+    session.clear()
+    print("세션 초기화 완료")
+    return jsonify(result = "success", result2 = {"test": "test"})
