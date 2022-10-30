@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>세션 테스트</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap" rel="stylesheet">
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <input type="button" class="btn btn-sm btn-outline-secondary" id="gacha_10" style="font-family: 'Jua', sans-serif; font-size: large; margin-left: 8px; margin-bottom: 5px" value="10회" data-gacha-amount="10">
+    <input type="button" class="btn btn-sm btn-outline-secondary" id="clear" style="font-family: 'Jua', sans-serif; font-size: large; margin-left: 8px; margin-bottom: 5px" value="청소" data-gacha-amount="10">
+    <script>
+        $('#clear').click(function (){
+            var gacha_amount = $('#clear').val()
+            var post_data = {
+                "gacha_amount": gacha_amount
+            }
+            $.ajax({
+                url: "/test/session_clear",
+                type: 'POST',
+                data: JSON.stringify(post_data),
+                dataType: 'JSON',
+                contentType: 'application/json',
+                success: function (data) {
+                    alert("세션 청소 완료")
+                },
+                error: function (request, status, error) {
+                    alert("세션 청소 도중에 ajax 통신에 실패하였습니다.")
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $('#gacha_10').click(function (){
+            var gacha_amount = $('#gacha_10').val()
+            var post_data = {
+                "gacha_amount": gacha_amount
+            }
+            $.ajax({
+                url: "/test/session",
+                type: 'POST',
+                data: JSON.stringify(post_data),
+                dataType: 'JSON',
+                contentType: 'application/json',
+                success: function (data) {
+                    var test = {{session.get("session_test")}} === 1;
+                    alert(test)
+                },
+                error: function (request, status, error) {
+                    alert("세션 데이터를 가져오는 도중에 ajax 통신에 실패하였습니다.")
+                }
+            })
+        })
+    </script>
+    <script src="../../static/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
