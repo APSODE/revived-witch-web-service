@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from bs4 import BeautifulSoup
 from database.models.gacha_doll_model import DollData, Doll
 from database.models.gacha_banner_model import BannerData, Banner
-
+import copy
 
 class DataTools:
     def __init__(self):
@@ -24,8 +24,6 @@ class DataTools:
         for GR in ["UR", "SSR", "SR", "R"]:
             if {"GRADE": GR} in default_query["$and"]:
                 default_query["$and"].remove({"GRADE": GR})
-            else:
-                pass
 
         default_query["$and"].append({"GRADE": grade})
         print(f"{grade} query : {default_query}\n\n")
@@ -57,7 +55,6 @@ class DataTools:
         except:
             pass
 
-
     def CreateGachaBannerData(self, element: str = None, dream: str = None, limited: str = None) -> [dict]:
         from app import database_controller
         if element is not None:
@@ -72,7 +69,6 @@ class DataTools:
                 element_type = "Brimstone"
             else:
                 element_type = "Aether"
-
             query = {
                 "$and": [
                     {
@@ -233,6 +229,213 @@ class DataTools:
         }
 
         database_controller.AddDataToDataBase(collection_name = "GachaBanner", add_data = [gacha_banner_data])
+
+    @staticmethod
+    def _QueryElementSelector(base_query: dict, banner_type: str, banner_element_data: str, grade_data: str) -> None:
+        if banner_type == "element":
+            if grade_data in ["SR", "R"]:
+                element_query = {
+                    "ELEMENT": {
+                        "$ne": "Aether"
+                    }
+                }
+
+            else:
+                element_query = {
+                    "ELEMENT": {
+                        "$eq": banner_element_data
+                    }
+                }
+
+        else:
+            element_query = {
+                "ELEMENT": {
+                    "$ne": "Aether"
+                }
+            }
+
+        base_query["$and"].append(element_query)
+
+    @staticmethod
+    def _QueryLimitedSelector(base_query: dict, banner_type: str, pick_up_data: dict) -> None:
+        pick_up_doll_name = pick_up_data.get("pick_up_doll_name")
+
+
+        if banner_type == "limited":
+            limited_query = {
+                "$or": [
+                    {
+                        "NAME": {
+                            "$eq": pick_up_doll_name
+                        }
+                    },
+                    {
+                        "LIMITED": {
+                            "$eq": False
+                        }
+                    }
+                ]
+            }
+
+        else:
+            limited_query = {
+                "LIMITED": {
+                    "$eq": False
+                }
+            }
+
+        base_query["$and"].append(limited_query)
+
+    @staticmethod
+    def _QueryAnemoneSelecotr(base_query: dict, banner_type: str):
+        if banner_type != "soul":
+            anemone_query = {
+                "NAME": {
+                    "$ne": "아네모네"
+                }
+            }
+
+            base_query["$and"].append(anemone_query)
+
+        else:
+            pass
+
+    @staticmethod
+    def _QueryGradeSelector_N(base_query: dict, grade_data: str):
+        grade_query = {
+            "GRADE": {
+                "$eq": grade_data
+            }
+        }
+
+        base_query["$and"].append(grade_query)
+
+    def CreateGachaBannerData_N(self, banner_data: dict, collection_name: str = None) -> None:
+        """
+        banner_data dict는 형태가 정해져 있으며 이를 따라야 한다.\n
+        banner_type -> ["element", "dream", "limited", "soul"] 4개 중 한가지 값\n
+        banner_element_data -> ["All", "Brimstone", "Saltstone", "Mercury"] 4개 중 한가지 값\n
+        banner_name: <str>\n
+        pick_up_data: {"active": <bool>, "pick_up_doll_name": <str>}\n
+        *pick_up_doll_name은 activate가 False이면 None으로 전달\n
+        이렇게 4가지 값을 포함한 dict를 전달하여야 한다.\n
+        미전달시 기본값인 "soul"로 작동하여 영혼소환의 배너를 생성한다.\n\n
+        :param banner_data: dict
+        :return:
+        """
+
+        banner_data_keys = banner_data.keys()
+        if "banner_type" not in banner_data_keys or "pick_up_data" not in banner_data_keys or "banner_element_data" not in banner_data_keys:
+            banner_type = "soul"
+            banner_name = "영혼 소환"
+            banner_element_data = "All"
+            pick_up_data = {
+                "active": False,
+                "pick_up_doll_name": None
+            }
+
+        else:
+            banner_type = banner_data.get("banner_type")
+            banner_name = banner_data.get("banner_name")
+            banner_element_data = banner_data.get("banner_element_data")
+            pick_up_data = banner_data.get("pick_up_data")
+
+        base_query = {
+            "$and": [
+                {
+                    "NAME": {
+                        "$ne": "유이"
+                    }
+                }
+            ]
+        }
+
+        summonable_doll_dict = {
+            "UR": None,
+            "SSR": None,
+            "SR": None,
+            "R": None
+        }
+
+        for grade in summonable_doll_dict.keys():
+            query_buffer = copy.deepcopy(base_query)
+
+            self._QueryLimitedSelector(
+                base_query = query_buffer,
+                banner_type = banner_type,
+                pick_up_data = pick_up_data
+            )
+
+            self._QueryAnemoneSelecotr(
+                base_query = query_buffer,
+                banner_type = banner_type
+            )
+
+            self._QueryElementSelector(
+                base_query = query_buffer,
+                banner_type = banner_type,
+                banner_element_data = banner_element_data,
+                grade_data = grade
+            )
+
+            self._QueryGradeSelector_N(
+                base_query = query_buffer,
+                grade_data = grade
+            )
+
+            from app import database_controller
+            summonable_doll_dict[grade] = database_controller.FindDatas(
+                collection_name = "Doll",
+                query = query_buffer
+            )
+
+        gacha_banner_data = {
+            "banner_name": banner_name,
+            "pick_up": pick_up_data,
+            "summonable_doll": summonable_doll_dict,
+            "probability": {
+                "UR": 2,
+                "SSR": 8,
+                "SR": 40,
+                "R": 50
+            }
+        }
+
+        from app import database_controller
+        database_controller.AddDataToDataBase(
+            collection_name = "GachaBanner" if collection_name is None else collection_name,
+            add_data = [gacha_banner_data]
+        )
+
+    def CreateAllGachaBanner(self, collection_name: str = None):
+        for elem in ["Brimstone", "Saltstone", "Mercury", "All"]:
+            if elem == "Brimstone":
+                name = "유황"
+
+            elif elem == "Saltstone":
+                name = "유황"
+
+            elif elem == "Mercury":
+                name = "유황"
+
+            else:
+                name = "영혼"
+
+
+            banner_data = {
+                "banner_type": "element",
+                "banner_element_data": elem,
+                "banner_name": f"{name} 원소 소환",
+                "pick_up_data": {
+                    "active": False,
+                    "pick_up_doll_name": None
+                }
+            }
+
+            self.CreateGachaBannerData_N(banner_data = banner_data, collection_name = collection_name)
+
+
+
 
     @staticmethod
     def AddNewDoll(DOLL_DTO: DollData) -> bool:
