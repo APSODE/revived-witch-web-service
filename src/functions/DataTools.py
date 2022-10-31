@@ -1,4 +1,5 @@
 # import os
+import json
 
 import requests
 from pymongo import MongoClient
@@ -383,6 +384,10 @@ class DataTools:
                 grade_data = grade
             )
 
+            if banner_name == "영혼 소환":
+                with open(f"영혼 소환 {grade}.json", "w") as WRITE_FILE:
+                    json.dump(query_buffer, WRITE_FILE, indent = 4)
+
             from app import database_controller
             summonable_doll_dict[grade] = database_controller.FindDatas(
                 collection_name = "Doll",
@@ -401,6 +406,9 @@ class DataTools:
             }
         }
 
+        if banner_name == "영혼 소환":
+            print(gacha_banner_data)
+
         from app import database_controller
         database_controller.AddDataToDataBase(
             collection_name = "GachaBanner" if collection_name is None else collection_name,
@@ -408,24 +416,24 @@ class DataTools:
         )
 
     def CreateAllGachaBanner(self, collection_name: str = None):
-        for elem in ["Brimstone", "Saltstone", "Mercury", "All"]:
+        for elem in ["Brimstone", "Saltstone", "Mercury", "Aether"]:
             if elem == "Brimstone":
                 name = "유황"
 
             elif elem == "Saltstone":
-                name = "유황"
+                name = "염석"
 
             elif elem == "Mercury":
-                name = "유황"
+                name = "수은"
 
             else:
                 name = "영혼"
 
 
             banner_data = {
-                "banner_type": "element",
+                "banner_type": "soul" if elem == "Aether" else "element",
                 "banner_element_data": elem,
-                "banner_name": f"{name} 소환" if elem == "All" else f"{name} 원소 소환",
+                "banner_name": f"{name} 소환" if elem == "Aether" else f"{name} 원소 소환",
                 "pick_up_data": {
                     "active": False,
                     "pick_up_doll_name": None
