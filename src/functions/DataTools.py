@@ -425,7 +425,7 @@ class DataTools:
             banner_data = {
                 "banner_type": "element",
                 "banner_element_data": elem,
-                "banner_name": f"{name} 원소 소환",
+                "banner_name": f"{name} 소환" if elem == "All" else f"{name} 원소 소환",
                 "pick_up_data": {
                     "active": False,
                     "pick_up_doll_name": None
