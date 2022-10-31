@@ -384,10 +384,6 @@ class DataTools:
                 grade_data = grade
             )
 
-            if banner_name == "영혼 소환":
-                with open(f"영혼 소환 {grade}.json", "w") as WRITE_FILE:
-                    json.dump(query_buffer, WRITE_FILE, indent = 4)
-
             from app import database_controller
             summonable_doll_dict[grade] = database_controller.FindDatas(
                 collection_name = "Doll",
@@ -405,9 +401,6 @@ class DataTools:
                 "R": 50
             }
         }
-
-        if banner_name == "영혼 소환":
-            print(gacha_banner_data)
 
         from app import database_controller
         database_controller.AddDataToDataBase(
