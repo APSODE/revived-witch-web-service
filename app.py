@@ -1,13 +1,13 @@
 import os
 
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template
 
 from database.DataBaseController import DataBaseController
 from src.views import SimulatorView, MainView, TestView
 
 app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-database_controller = DataBaseController("Development_Database")
+database_controller = DataBaseController("Product_Database")
 
 
 app.register_blueprint(SimulatorView.BP)
