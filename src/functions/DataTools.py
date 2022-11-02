@@ -45,16 +45,25 @@ class DataTools:
                 LIMITED = True if DOLL_ELEM.attrs.get("data-tags") == "limited" else False
             )
 
-            DOLL_DATA_LIST.append(DOLL_DATA_DTO.GetAllDollData())
+            DOLL_DATA_LIST.append(DOLL_DATA_DTO)
 
         return DOLL_DATA_LIST
 
-    def CreateAllDollData(self, doll_data_object_list: [DollData], collection_name: str) -> bool:
+    def CreateAllDollData(self, collection_name: str) -> bool:
         WORK_STATUS = True
         try:
-            pass
-        except:
-            pass
+            for doll_data_object in self.GetData_DOLL():
+                from app import database_controller
+                database_controller.AddDataToDataBase(
+                    collection_name = collection_name,
+                    add_data = [doll_data_object.GetAllDollData()]
+                )
+
+        except Exception as MSG:
+            WORK_STATUS = False
+            print(MSG)
+        finally:
+            return WORK_STATUS
 
     def CreateGachaBannerData(self, element: str = None, dream: str = None, limited: str = None) -> [dict]:
         from app import database_controller
@@ -232,6 +241,19 @@ class DataTools:
         database_controller.AddDataToDataBase(collection_name = "GachaBanner", add_data = [gacha_banner_data])
 
     @staticmethod
+    def _CreateBannerStackInfo(banner_type: str) -> dict:
+        stack_info = {
+            "half": 80,
+            "full": 160
+        }
+
+        if banner_type in ["element", "soul"]:
+            stack_info["full"] = 80
+
+        return stack_info
+
+
+    @staticmethod
     def _QueryElementSelector(base_query: dict, banner_type: str, banner_element_data: str, grade_data: str) -> None:
         if banner_type == "element":
             if grade_data in ["SR", "R"]:
@@ -392,6 +414,8 @@ class DataTools:
 
         gacha_banner_data = {
             "banner_name": banner_name,
+            "banner_type": banner_type,
+            "stack_info": self._CreateBannerStackInfo(banner_type = banner_type),
             "pick_up": pick_up_data,
             "summonable_doll": summonable_doll_dict,
             "probability": {
@@ -463,6 +487,9 @@ class DataTools:
 
     @staticmethod
     def DatabaseDollDataSerializer(database_doll_data: dict) -> dict:
+        if database_doll_data is None:
+            raise ValueError("db데이터를 시리얼라이즈 하기 위해서는 파라미터로 전달받은 값이 None이 되면 안됩니다.")
+
         RT_DICT = {
             "NAME": database_doll_data.get("NAME"),
             "GRADE": database_doll_data.get("GRADE"),
@@ -474,12 +501,25 @@ class DataTools:
         return RT_DICT
 
     @staticmethod
-    def DatabaseBanneDataSerializer(database_banner_data: dict) -> dict:
+    def DatabaseBannerDataSerializer(database_banner_data: dict) -> dict:
+        if database_banner_data is None:
+            raise ValueError("db데이터를 시리얼라이즈 하기 위해서는 파라미터로 전달받은 값이 None이 되면 안됩니다.")
+
         RT_DICT = {
-            "BANNER_NAME": database_banner_data.get("BANNER_NAME"),
-            "PICK_UP_DATA": database_banner_data.get("PICK_UP_DATA"),
-            "PROBABILITY": database_banner_data.get("PROBABILITY")
+            # "BANNER_NAME": database_banner_data.get("BANNER_NAME"),
+            # "BANNER_TYPE": database_banner_data.get("BANNER_TYPE"),
+            # "STACK_INFO": database_banner_data.get("STACK_INFO"),
+            # "PICK_UP_DATA": database_banner_data.get("PICK_UP_DATA"),
+            # "PROBABILITY": database_banner_data.get("PROBABILITY"),
+            # "SUMMONABLE_DOLLS": database_banner_data.get("SUMMONABLE_DOLLS")
+            "BANNER_NAME": database_banner_data.get("banner_name"),
+            "BANNER_TYPE": database_banner_data.get("banner_type"),
+            "STACK_INFO": database_banner_data.get("stack_info"),
+            "PICK_UP_DATA": database_banner_data.get("pick_up"),
+            "PROBABILITY": database_banner_data.get("probability"),
+            "SUMMONABLE_DOLLS": database_banner_data.get("summonable_doll")
         }
+        # print(f"RT_DICT : {RT_DICT}")
 
         return RT_DICT
 
@@ -510,7 +550,7 @@ class DataTools:
         )
 
         banner_object = Banner.SerializeData(
-            target_data = DataTools.DatabaseBanneDataSerializer(
+            target_data = DataTools.DatabaseBannerDataSerializer(
                 database_banner_data = banner_db_data
             )
         )
