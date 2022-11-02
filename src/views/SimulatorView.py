@@ -49,9 +49,11 @@ def Simulator_Main():
         )
         current_banner_data = DataTools.GetBannerDataByBannerName(banner_name = banner_name)
         print(f"is pickup banner? : {current_banner_data.PickUpData.get('active')}")
-        gacha_result_doll_list = simulator.SimulatePickUpGacha(
-            session=session
-        )
+        # gacha_result_doll_list = simulator.SimulatePickUpGacha(
+        #     session=session
+        # )
+
+        gacha_result_doll_list = simulator.SimulateGacha()
         # if current_banner_data.PickUpData.get("active"):
         #     gacha_result_doll_list = simulator.SimulatePickUpGacha(
         #         session = session
