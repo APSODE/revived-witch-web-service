@@ -17,6 +17,7 @@ BP = Blueprint("Simulator", __name__,
                static_folder = "../static"
                )
 
+
 @BP.route("/", methods = ["GET", "POST"])
 def Simulator_Main():
     if request.method == "GET":
@@ -26,29 +27,39 @@ def Simulator_Main():
 
             print("gacha_count 값 초기화 진행")
             session["gacha_count"] = 0
+            session["gacha_count_half"] = 0
+            session["gacha_count_full"] = 0
         return render_template("Simulator/Simulator.html", result_img = None)
     else:
-        banner = session.get("banner")
+        banner_name = session.get("banner")
         if "gacha_count" not in session.keys():
             print("gacha_count의 값을 10으로 지정")
             session["gacha_count"] = 10
+            session["gacha_count_half"] = 10
+            session["gacha_count_full"] = 10
         else:
             print("gacha_count의 값을 10을 추가")
             session["gacha_count"] += 10
+            session["gacha_count_half"] += 10
+            session["gacha_count_full"] += 10
             print(f"gacha_count : {session.get('gacha_count')}")
 
         simulator = Simulator(
-            banner_name = "영혼 소환" if banner is None else banner
+            banner_name = "영혼 소환" if banner_name is None else banner_name
         )
-        current_banner_data = DataTools.GetBannerDataByBannerName(banner_name = banner)
-        if current_banner_data.PickUpData.get("active"):
-            gacha_result_doll_list = simulator.SimulatePickUpGacha(
-                current_gacha_count = session.get("gacha_count"),
-                banner_data = current_banner_data
-            )
+        current_banner_data = DataTools.GetBannerDataByBannerName(banner_name = banner_name)
+        print(f"is pickup banner? : {current_banner_data.PickUpData.get('active')}")
+        gacha_result_doll_list = simulator.SimulatePickUpGacha(
+            session=session
+        )
+        # if current_banner_data.PickUpData.get("active"):
+        #     gacha_result_doll_list = simulator.SimulatePickUpGacha(
+        #         session = session
+        #     )
+        #
+        # else:
+        #     gacha_result_doll_list = simulator.SimulateGacha()
 
-        else:
-            gacha_result_doll_list = simulator.SimulateGacha()
 
 
 
@@ -82,12 +93,14 @@ def Simulator_Main():
         }
         return jsonify(result_data = return_data)
 
+
 @BP.route("/soul")
 def Simulator_Main_Soul():
     session["bf_banner"] = session.get("banner")
     session["banner"] = f"영혼 소환"
 
     return redirect(url_for("Simulator.Simulator_Main"))
+
 
 @BP.route("/mercury")
 def Simulator_Main_Mercury():
@@ -96,12 +109,14 @@ def Simulator_Main_Mercury():
 
     return redirect(url_for("Simulator.Simulator_Main"))
 
+
 @BP.route("/brimstone")
 def Simulator_Main_Brimstone():
     session["bf_banner"] = session.get("banner")
     session["banner"] = f"유황 원소 소환"
 
     return redirect(url_for("Simulator.Simulator_Main"))
+
 
 @BP.route("/saltstone")
 def Simulator_Main_Saltstone():
@@ -110,6 +125,21 @@ def Simulator_Main_Saltstone():
 
     return redirect(url_for("Simulator.Simulator_Main"))
 
+
+@BP.route("/dream")
+def Simulator_Main_Dream():
+    session["bf_banner"] = session.get("banner")
+    session["banner"] = f"꿈의 소환"
+
+    return redirect(url_for("Simulator.Simulator_Main"))
+
+@BP.route("/stack_clear")
+def Simulator_Main_StackClear():
+    session["gacha_count"] = 0
+    session["gacha_count_half"] = 0
+    session["gacha_count_full"] = 0
+
+    return redirect(url_for("Simulator.Simulator_Main"))
 # @BP.route("/<img_file_bin>")
 # def Simulator_Main_s(img_file_bin = None):
 #     return render_template("Simulator/Simulator.html", img_file_bin = img_file_bin)

@@ -9,16 +9,25 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap" rel="stylesheet">
         <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+
+        <style>
+            a:link { text-decoration: none;}
+            a:visited { text-decoration: none;}
+            a:hover { text-decoration: none;}
+        </style>
+
         {% block head %}
         {% endblock %}
     </head>
     <body>
         <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#"
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{{ url_for("Main.RevivedWitch_Main") }}"
                style="font-family: 'Black Han Sans', sans-serif;">
-                깨어난 마녀 시뮬레이터
+                <span class="position-relative">
+                    깨어난 마녀 시뮬레이터
+                </span>
             </a>
-            <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            <button class="navbar-toggler position-relative d-md-none collapsed " type="button" data-bs-toggle="collapse"
                     data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
                     aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -44,29 +53,35 @@
                             <span data-feather="plus-circle" class="align-text-bottom"></span>
                         </a>
                         </h6>
-
-                        <ul class="nav flex-column mb-2">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Soul") }}" style="font-family: 'Black Han Sans', sans-serif">
-                                    <img src="../../static/img/gacha/banner/small/soul.png" style="max-width: 100%; height: auto">
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Brimstone") }}" style="font-family: 'Black Han Sans', sans-serif">
-                                    <img src="../../static/img/gacha/banner/small/brimstone.png" style="max-width: 100%; height: auto">
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Mercury") }}" style="font-family: 'Black Han Sans', sans-serif">
-                                    <img src="../../static/img/gacha/banner/small/mercury.png" style="max-width: 100%; height: auto">
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Saltstone") }}" style="font-family: 'Black Han Sans', sans-serif">
-                                    <img src="../../static/img/gacha/banner/small/saltstone.png" style="max-width: 100%; height: auto">
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="overflow-auto">
+                            <ul class="nav flex-column mb-2">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Dream") }}" style="font-family: 'Black Han Sans', sans-serif">
+                                        <img src="../../static/img/gacha/banner/small/dream.png" style="max-width: 100%; height: auto">
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Soul") }}" style="font-family: 'Black Han Sans', sans-serif">
+                                        <img src="../../static/img/gacha/banner/small/soul.png" style="max-width: 100%; height: auto">
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Brimstone") }}" style="font-family: 'Black Han Sans', sans-serif">
+                                        <img src="../../static/img/gacha/banner/small/brimstone.png" style="max-width: 100%; height: auto">
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Mercury") }}" style="font-family: 'Black Han Sans', sans-serif">
+                                        <img src="../../static/img/gacha/banner/small/mercury.png" style="max-width: 100%; height: auto">
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for("Simulator.Simulator_Main_Saltstone") }}" style="font-family: 'Black Han Sans', sans-serif">
+                                        <img src="../../static/img/gacha/banner/small/saltstone.png" style="max-width: 100%; height: auto">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </nav>
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">

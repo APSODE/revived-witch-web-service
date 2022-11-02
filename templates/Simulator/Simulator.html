@@ -10,7 +10,7 @@
             <h1 class="h2" style="font-family: 'Black Han Sans', sans-serif; margin-top: 10px">가챠 시뮬레이터 </h1>
         {% else %}
             <h1 class="h2" style="font-family: 'Black Han Sans', sans-serif; margin-top: 10px">가챠 시뮬레이터 - [{{ session.get("banner") }}]</h1>
-            
+
         {% endif %}
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
@@ -18,6 +18,13 @@
 {#                    <input type="button" class="btn btn-sm btn-outline-secondary" id="gacha_1"#}
 {#                           style="font-family: 'Jua', sans-serif;  font-size: large; margin-right:8px; margin-bottom: 5px"#}
 {#                           value="1회" data-gacha-amount="1">#}
+                    <a href="{{ url_for("Simulator.Simulator_Main_StackClear") }}">
+                        <input type="button" class="btn btn-sm btn-outline-secondary" id="stack_clear"
+                               style="font-family: 'Jua', sans-serif; font-size: large; margin-left: 8px; margin-bottom: 5px"
+                               value="초기화" data-gacha-amount="10">
+                    </a>
+
+
 
                     <input type="button" class="btn btn-sm btn-outline-secondary" id="gacha_10"
                            style="font-family: 'Jua', sans-serif; font-size: large; margin-left: 8px; margin-bottom: 5px"
@@ -114,9 +121,12 @@
             </div>
         </div>
     </div>
-
     <img alt=" " id="gacha_result_img" src="../static/img/gacha/background/gacha_background.png" style=" max-width:100%; height:auto;">
-
+{#    {% if session.get("banner") == "꿈의 소환" %}#}
+{#        <img alt=" " id="gacha_result_img" src="../static/img/gacha/background/dream_gacha_background.png" style=" max-width: 60%; height:auto;">#}
+{#    {% else %}#}
+{#        <img alt=" " id="gacha_result_img" src="../static/img/gacha/background/gacha_background.png" style=" max-width:100%; height:auto;">#}
+{#    {% endif %}#}
 
 
     {# 위의 이미지 태그는 base64인코딩된 바이너리 파일로 지정 #}
