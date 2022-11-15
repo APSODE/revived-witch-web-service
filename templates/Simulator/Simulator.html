@@ -8,6 +8,8 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         {% if session.get("banner") == None %}
             <h1 class="h2" style="font-family: 'Black Han Sans', sans-serif; margin-top: 10px">가챠 시뮬레이터 </h1>
+        {% elif session.get("banner") == "꿈의 소환" %}
+            <h1 class="h2" style="font-family: 'Black Han Sans', sans-serif; margin-top: 10px">가챠 시뮬레이터 - [픽업 소환]</h1>
         {% else %}
             <h1 class="h2" style="font-family: 'Black Han Sans', sans-serif; margin-top: 10px">가챠 시뮬레이터 - [{{ session.get("banner") }}]</h1>
 
