@@ -1,5 +1,5 @@
 import os
-
+from typing import List, Dict
 from pymongo import MongoClient, database
 import json
 
@@ -42,7 +42,7 @@ class DataBaseController:
 
 
 
-    def AddDataToDataBase(self, collection_name: str, add_data: [dict]):
+    def AddDataToDataBase(self, collection_name: str, add_data: List[dict]):
         if add_data.__len__() > 1:
             self._database.get_collection(collection_name).insert_many(add_data)
         else:
