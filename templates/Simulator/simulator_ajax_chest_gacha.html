@@ -1,0 +1,35 @@
+{% extends "Simulator/Simulator.html" %}
+{% block ajax_button %}
+    <input type="button" class="btn btn-sm btn-outline-secondary" id="gacha_1"
+                           style="font-family: 'Jua', sans-serif; font-size: large; margin-left: 8px; margin-bottom: 5px"
+                           value="1회" data-gacha-amount="1">
+
+    <script>
+        $('#gacha_10').click(function (){
+            var gacha_amount = $('#gacha_1').val()
+            var post_data = {
+                "gacha_amount": gacha_amount
+            }
+            {#document.getElementById("gacha_result_img").src = "../static/video/gacha_normal.mp4"#}
+            $.ajax({
+                url: {{ url_for("Simulator.Simulator_Main") }},
+                type: 'POST',
+                data: JSON.stringify(post_data),
+                dataType: 'JSON',
+                contentType: 'application/json',
+                success: function (data) {
+
+                    document.getElementById("gacha_result_img").src = data.result_data["src"]
+                    var gachaResultData = data.result_data["result"]
+
+                    for (result_num in gachaResultData) {
+                    }
+
+                },
+                error: function (request, status, error) {
+                    alert("가챠 결과 이미지를 가져오는 도중에 ajax 통신에 실패하였습니다.")
+                }
+            })
+        })
+    </script>
+{% endblock %}
