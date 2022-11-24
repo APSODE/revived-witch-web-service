@@ -1,9 +1,12 @@
+import json
 import os
 import time
 
 from flask import Blueprint, redirect, render_template, url_for, session, request, jsonify
 from urllib.parse import quote
 
+from database.models.gacha_banner_model import BannerData
+from database.models.chest_gacha_banner_model import ChestGachaBannerData
 from src.functions.DataTools import DataTools
 from src.functions.ImageTools import ImageTools
 from src.functions.Simulator import Simulator
@@ -33,67 +36,105 @@ def Simulator_Main():
     else:
         banner_name = session.get("banner")
         if "gacha_count" not in session.keys():
-            print("gacha_count의 값을 10으로 지정")
-            session["gacha_count"] = 10
-            session["gacha_count_half"] = 10
-            session["gacha_count_full"] = 10
+            if banner_name == "레전더리 장비 상자":
+                print("gacha_count의 값을 1을 추가")
+                session["gacha_count"] = 1
+
+            else:
+                print("gacha_count의 값을 10으로 지정")
+                session["gacha_count"] = 10
+                session["gacha_count_half"] = 10
+                session["gacha_count_full"] = 10
         else:
-            print("gacha_count의 값을 10을 추가")
-            session["gacha_count"] += 10
-            session["gacha_count_half"] += 10
-            session["gacha_count_full"] += 10
-            print(f"gacha_count : {session.get('gacha_count')}")
+            if banner_name == "레전더리 장비 상자":
+                print("gacha_count의 값을 1을 추가")
+                session["gacha_count"] += 1
+
+            else:
+                print("gacha_count의 값을 10을 추가")
+                session["gacha_count"] += 10
+                session["gacha_count_half"] += 10
+                session["gacha_count_full"] += 10
+                print(f"gacha_count : {session.get('gacha_count')}")
 
         simulator = Simulator(
             banner_name = "영혼 소환" if banner_name is None else banner_name
         )
-        current_banner_data = DataTools.GetBannerDataByBannerName(banner_name = banner_name)
-        print(f"is pickup banner? : {current_banner_data.PickUpData.get('active')}")
-        # gacha_result_doll_list = simulator.SimulatePickUpGacha(
-        #     session=session
-        # )
 
-        gacha_result_doll_list = simulator.SimulateGacha()
-        # if current_banner_data.PickUpData.get("active"):
-        #     gacha_result_doll_list = simulator.SimulatePickUpGacha(
-        #         session = session
-        #     )
-        #
-        # else:
-        #     gacha_result_doll_list = simulator.SimulateGacha()
+        if simulator.SIMULATOR_BANNET_TYPE == BannerData:
+            current_banner_data = DataTools.GetBannerDataByBannerName(banner_name = banner_name)
+            print(f"is pickup banner? : {current_banner_data.PickUpData.get('active')}")
+            # gacha_result_doll_list = simulator.SimulatePickUpGacha(
+            #     session=session
+            # )
 
-
-
-
-        session["gacha_result_list"] = {}
-        response_use_data = {}
-        for doll_data_idx in range(len(gacha_result_doll_list)):
-            doll_data = gacha_result_doll_list[doll_data_idx]
-            gacha_num = doll_data_idx + 1
-            session[f"{gacha_num}"] = doll_data.GetAllDollData()
-            response_use_data[f"{gacha_num}"] = doll_data.GetAllDollData()
+            gacha_result_doll_list = simulator.SimulateGacha()
+            # if current_banner_data.PickUpData.get("active"):
+            #     gacha_result_doll_list = simulator.SimulatePickUpGacha(
+            #         session = session
+            #     )
+            #
+            # else:
+            #     gacha_result_doll_list = simulator.SimulateGacha()
 
 
-        IT = ImageTools()
-        gacha_result_img = IT.MergeGachaBgImage(doll_object_list=gacha_result_doll_list)
-        img_name = uuid.uuid4()
 
-        # img_save_dir = os.path.dirname(os.path.dirname())
-        from app import BASE_DIR
-        img_save_dir = BASE_DIR + f"/static/img/gacha/result/{img_name}.png"
-        f_time = time.perf_counter()
-        gacha_result_img.save(img_save_dir)
-        s_time = time.perf_counter()
 
-        print(f"gacha_result_img.save() 소요시간 : {s_time - f_time}s")
-        # encoded_gacha_result_img = base64.b64encode(gacha_result_img.tobytes()).decode()
-        return_data = {
-            "src": f"../static/img/gacha/result/{img_name}.png",
-            "name": f"{img_name}",
-            "result": response_use_data,
-            "current_gacha_amount": session.get("gacha_count")
-        }
-        return jsonify(result_data = return_data)
+            session["gacha_result_list"] = {}
+            response_use_data = {}
+            for item_data_idx in range(len(gacha_result_doll_list)):
+                item_data = gacha_result_doll_list[item_data_idx]
+                gacha_num = item_data_idx + 1
+                session[f"{gacha_num}"] = item_data.GetAllDollData()
+                response_use_data[f"{gacha_num}"] = item_data.GetAllDollData()
+
+
+            IT = ImageTools()
+            gacha_result_img = IT.MergeGachaBgImage(doll_object_list=gacha_result_doll_list)
+            img_name = uuid.uuid4()
+
+            # img_save_dir = os.path.dirname(os.path.dirname())
+            from app import BASE_DIR
+            img_save_dir = BASE_DIR + f"/static/img/gacha/result/{img_name}.png"
+            f_time = time.perf_counter()
+            gacha_result_img.save(img_save_dir)
+            s_time = time.perf_counter()
+
+            print(f"gacha_result_img.save() 소요시간 : {s_time - f_time}s")
+            # encoded_gacha_result_img = base64.b64encode(gacha_result_img.tobytes()).decode()
+            return_data = {
+                "src": f"../static/img/gacha/result/{img_name}.png",
+                "name": f"{img_name}",
+                "result": response_use_data,
+                "current_gacha_amount": session.get("gacha_count")
+            }
+            return jsonify(result_data = return_data)
+
+        elif simulator.SIMULATOR_BANNET_TYPE == ChestGachaBannerData:
+            gacha_result_item_object = simulator.SimulateChestGacha()
+            image_tools = ImageTools()
+            gacha_result_image = image_tools.MergeItemGachaBgImage(item_object = gacha_result_item_object)
+            img_name = uuid.uuid4()
+            from app import BASE_DIR
+            gacha_result_image.save(BASE_DIR + f"/static/img/gacha/result/{img_name}.png")
+
+            response_use_data = {}
+            result_list = [gacha_result_item_object]
+            for item_data_idx in range(len(result_list)):
+                item_data = result_list[item_data_idx]
+                gacha_num = item_data_idx + 1
+                session[f"{gacha_num}"] = item_data.GetAllItemEquipmentData()
+                response_use_data[f"{gacha_num}"] = item_data.GetAllItemEquipmentData()
+
+            return_data = {
+                "src": f"../static/img/gacha/result/{img_name}.png",
+                "name": f"{img_name}",
+                "result": response_use_data,
+                "current_gacha_amount": session.get("gacha_count")
+            }
+            # with open("chest_item_data.json", "w") as write_file:
+            #     json.dump(return_data, write_file, indent = 4)
+            return jsonify(result_data = return_data)
 
 
 @BP.route("/soul")
@@ -132,6 +173,13 @@ def Simulator_Main_Saltstone():
 def Simulator_Main_Dream():
     session["bf_banner"] = session.get("banner")
     session["banner"] = f"꿈의 소환"
+
+    return redirect(url_for("Simulator.Simulator_Main"))
+
+@BP.route("/chest")
+def Simulator_Main_Chest():
+    session["bf_banner"] = session.get("banner")
+    session["banner"] = f"레전더리 장비 상자"
 
     return redirect(url_for("Simulator.Simulator_Main"))
 
