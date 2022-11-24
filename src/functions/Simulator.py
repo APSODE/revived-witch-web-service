@@ -1,15 +1,17 @@
 import json
 import time
 import sys
-from typing import List
+from typing import List, Dict, Union, Optional
 from random import *
 
 import flask
 from bson import json_util
 
 from database.models.gacha_banner_model import BannerData, Banner
+from database.models.chest_gacha_banner_model import ChestGachaBannerData, ChestGachaBanner
 from database.models.gacha_doll_model import DollData, Doll
-from src.functions.DataTools import DataTools
+from database.models.gacha_equip_model import ItemEquipmentData, ItemEquipment
+from src.functions.DataTools import DataTools, BannerDataTypeError
 
 
 class Simulator:
@@ -21,27 +23,32 @@ class Simulator:
         #     query = {"banner_name": banner_name},
         #     find_one = True
         # )
+        self._SIMULATE_BANNER_DATA: Union[BannerData, ChestGachaBannerData]
 
-        self._SIMULATE_BANNER_DATA = Banner.SerializeData(
-            target_data = DataTools.DatabaseBannerDataSerializer(
-                database_banner_data = self.database_controller.FindDatas(
-                    collection_name = "GachaBanner",
+        try:
+            self._SIMULATE_BANNER_DATA = Banner.SerializeData(
+                target_data = DataTools.DatabaseBannerDataSerializer(
+                    database_banner_data = self.database_controller.FindDatas(
+                        collection_name = "GachaBanner",
+                        query = {"banner_name": banner_name},
+                        find_one = True
+                    )
+                )
+            )
+            self.SIMULATOR_BANNET_TYPE = BannerData
+        except BannerDataTypeError:
+            self._SIMULATE_BANNER_DATA = ChestGachaBanner.SerializeData(
+                target_data = self.database_controller.FindDatas(
+                    collection_name = "ChestGachaBanner",
                     query = {"banner_name": banner_name},
                     find_one = True
                 )
             )
-        )
+            self.SIMULATOR_BANNET_TYPE = ChestGachaBannerData
+
+
+
         self._SIMULATE_GACHA_LIST = []
-
-    def _SelectGrade(self):
-        pass
-
-    def Test(self):
-        with open("TEST_DATA.json", "w") as WRITE_PROFILE:
-            result = self._SIMULATE_BANNER_DATA
-            json_data = json.dumps(result, default = json_util.default)
-            json.dump(json.loads(json_data), WRITE_PROFILE, indent = 4)
-
 
     def _GachaStackChecker(self, session: flask.session) -> dict:
         """
@@ -52,8 +59,7 @@ class Simulator:
         second key-value : full - <bool>\n
         이 두가지 Key는 현재 가챠 스택이 해당 배너의 천장 스택에 도달하였는지를 알려준다.
 
-        :param current_stack: int
-        :param banner_type: ["element", "soul", "limited", "dream"] 4개중 1개
+        :param session: int
         :return:
         """
         current_stack_half = session.get("gacha_stack_half")
@@ -78,13 +84,10 @@ class Simulator:
 
         return check_result
 
-
-
-
-
     def _GachaCeilingChecker(self, gacha_result_list: List[DollData], session: flask.session) -> None:
         # print(f"_GachaCeilingChecker 실행 확인")
         stack_check_result = self._GachaStackChecker(session = session)
+        self._SIMULATE_BANNER_DATA: BannerData
 
         gacha_result_grade_list = [doll_grade.Grade for doll_grade in gacha_result_list]
 
@@ -134,12 +137,10 @@ class Simulator:
                         )
                     )
 
-
-
-
     def SimulateGacha(self) -> [DollData]:
         f_time = time.perf_counter()
         GACHA_RESULT_LIST = []
+        self._SIMULATE_BANNER_DATA: BannerData
         gacha_probability = self._SIMULATE_BANNER_DATA.Probability
         summonable_dolls = self._SIMULATE_BANNER_DATA.SummonableDolls
 
@@ -162,7 +163,11 @@ class Simulator:
         return GACHA_RESULT_LIST
 
     def SimulatePickUpGacha(self, session: flask.session) -> [DollData]:
+        if type(self._SIMULATE_BANNER_DATA) == ChestGachaBannerData:
+            raise BannerDataTypeError("인형 가챠 시뮬레이터에 상자 가챠 배너 데이터가 입력되었습니다.")
+
         GACHA_RESULT_LIST = []
+        self._SIMULATE_BANNER_DATA: BannerData
         gacha_probability = self._SIMULATE_BANNER_DATA.Probability
         summonable_dolls = self._SIMULATE_BANNER_DATA.SummonableDolls
 
@@ -189,15 +194,24 @@ class Simulator:
                 )
             )
 
-
             GACHA_RESULT_LIST.append(gacha_result_doll_object)
 
         self._GachaCeilingChecker(gacha_result_list = GACHA_RESULT_LIST, session = session)
         return GACHA_RESULT_LIST
 
+    def SimulateChestGacha(self, session: flask.session = None) -> ItemEquipmentData:
 
+        self._SIMULATE_BANNER_DATA: ChestGachaBannerData
+        summonable_items = self._SIMULATE_BANNER_DATA.SummonableItems
+        # print(summonable_items)
 
+        random_choice_item_data = choice(summonable_items.get(choice(["weapon", "armor", "accessory"])))
 
+        random_choice_item_object = ItemEquipment.SerializeData(
+            target_data = random_choice_item_data
+        )
+
+        return random_choice_item_object
 
     def GradeChecker(self, gacha_result_list: [DollData]) -> dict:
         rt_data = {
@@ -217,7 +231,7 @@ class Simulator:
 
         return rt_data
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     gacha_simulator = Simulator(banner_name = "영혼 소환")
     gacha_simulator.SimulateGacha()
